@@ -1,32 +1,33 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
+import { getQuestion } from '../actions/questions';
 import Question from '../components/Question';
 
 class Home extends Component{
-    question = {
-        category: {
-            name: "Football",
-            question_count: 0,
-            id: 9,
-            createdAt: "2017-05-24T17:25:21.000Z",
-            updatedAt: "2017-05-24T17:25:21.000Z",
-            parent_category: null
-        },
-        question: "What is the NFL's all-star game called?",
-        option1: "The Pro Bowl",
-        option2: "Best of the Best",
-        option3: "The Chowder Game",
-        option4: "The MVP Game",
-        answers: 1,
-        id: 256,
-        createdAt: "2017-05-24T17:25:21.000Z",
-        updatedAt: "2017-05-24T17:25:21.000Z"
-    };
+
+    componentDidMount() {
+        this.props.getQuestion();
+    }
+
+    answerSelected(isCorrect, correctAnswer) {
+        console.log('Is selected answer correct?', isCorrect);
+        console.log('Correct answer is:', correctAnswer);
+    }
+
     render() {
         return (
-            <Question data={this.question} />
+            <Question data={this.props.question} onSelectAnswer={this.answerSelected} />
         );
     }
 }
 
-export default Home;
+const mapStateToProps = state => ({
+    question: state.curQuestion
+});
+
+const mapDispatchToProps = dispatch => ({
+    getQuestion: () => dispatch(getQuestion())
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(Home);

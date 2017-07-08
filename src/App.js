@@ -1,19 +1,25 @@
 import React, { Component } from 'react';
 import { Switch , Route} from 'react-router-dom';
+import { connect } from 'react-redux'
+import classNames from 'classnames';
+
 import './App.css';
+import logo from './concord.svg';
 
 import Home from './pages/Home';
 
 class App extends Component {
 
-    componentDidMount() {
-        console.log('ss');
-        // let questions = await fetch('https://qriusity.com/v1/questions');
-    }
     render() {
+        const { isLoading } = this.props;
         return (
-            <div className="app-wrapper">
-                From App.
+            <div className="app-wrapper">{isLoading}
+                <div className={classNames({
+                    'app-loader': true,
+                    'show': isLoading
+                })}>
+                    <img src={logo} alt=""/>
+                </div>
                 <Switch>
                     <Route exact path="/" component={Home}/>
                 </Switch>
@@ -22,4 +28,7 @@ class App extends Component {
     }
 }
 
-export default App;
+const mapStateToProps = state => ({
+    isLoading: state.isLoading
+});
+export default connect(mapStateToProps)(App);
