@@ -1,23 +1,34 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import { getQuestion } from '../actions/questions';
+import { getQuestion, addToScoreHistory, newQuestion } from '../actions/questions';
 import Question from '../components/Question';
 
 class Home extends Component{
 
+    constructor(props) {
+        super(props);
+
+        this.answerSelected = this.answerSelected.bind(this);
+    }
     componentDidMount() {
         this.props.getQuestion();
     }
 
-    answerSelected(isCorrect, correctAnswer) {
-        console.log('Is selected answer correct?', isCorrect);
-        console.log('Correct answer is:', correctAnswer);
+    answerSelected(question, answers, isCorrectAnswer, correctAnswerId, selectedAnswerId) {
+        console.log('Is selected answer correct?', isCorrectAnswer);
+        console.log('Correct answer is:', correctAnswerId);
+
+        this.props.dispatch(addToScoreHistory(question, answers, isCorrectAnswer, correctAnswerId, selectedAnswerId));
+    }
+
+    newQuestion() {
+        this.props.newQuestion();
     }
 
     render() {
         return (
-            <Question data={this.props.question} onSelectAnswer={this.answerSelected} />
+            <Question data={this.props.question} onSelectAnswer={this.answerSelected} onNewQuestion={() => this.newQuestion()} />
         );
     }
 }
@@ -27,7 +38,9 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-    getQuestion: () => dispatch(getQuestion())
+    dispatch,
+    getQuestion: () => dispatch(getQuestion()),
+    newQuestion: () => dispatch(newQuestion())
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Home);

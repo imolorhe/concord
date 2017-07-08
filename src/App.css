@@ -5,6 +5,8 @@
   --dark-purple-color: #511E78;
   --green-color: #96D38C;
   --red-color: #CF4647;
+  --white-color: #fff;
+  --black-color: #000;
 
   --main-bg-color: tomato;
   --primary-color: var(--purple-color);
@@ -22,11 +24,13 @@ html,body{
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
-html,body,#root, .app-wrapper, .question-wrapper{
+html,body,#root, .app-wrapper{
   height: 100%;
 }
-button{
+button, .button{
   cursor: pointer;
+  padding: 10px;
+  background: var(--white-color);
 }
 
 .App {
@@ -55,7 +59,8 @@ button{
 }
 
 .app-wrapper{
-
+  display: flex;
+  flex-direction: column;
 }
 .app-loader{
   position: absolute;
@@ -78,11 +83,61 @@ button{
   width: 50px;
   animation: App-logo-spin infinite 1s var(--ease-in-out-cubic);
 }
+.app-header{
+  background: var(--primary-color);
+  color: var(--white-color);
+}
+.app-header-menu{
+  margin: 0;
+  padding: 0;
+}
+.app-header-menu li {
+  display: inline-block;
+}
+.app-header-menu a{
+  color: var(--white-color);
+  text-decoration: none;
+  padding: 5px 10px;
+  display: inline-block;
+}
+.app-header-menu a:hover{
+  background: rgba(255, 255, 255, .2);
+}
 .question-wrapper{
+  position: relative;
   display: flex;
+  flex: 1;
   flex-direction: column;
   font-size: 18px;
   text-align: center;
+}
+.question-overlay{
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, .4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 36px;
+  font-weight: bold;
+  text-transform: uppercase;
+  visibility: hidden;
+  opacity: 0;
+  transition: all .3s ease;
+}
+.question-overlay.show{
+  opacity: 1;
+  visibility: visible;
+}
+.question-overlay-text{
+  transform: scale(0);
+  transition: all .5s var(--ease-in-out-cubic);
+}
+.question-overlay.show .question-overlay-text{
+  transform: scale(1);
 }
 .question-inner-wrapper{
   display: flex;
@@ -131,4 +186,20 @@ button{
 .wrong-answer .question-answer-item-inner{
   background: var(--red-color);
   color: white;
+}
+
+.scoreboard-board{
+  display: flex;
+}
+.scoreboard-board-item{
+  flex: 1;
+  text-align: center;
+  padding: 10px;
+  text-transform: uppercase;
+}
+.scoreboard-board-item-inner{
+  background: var(--light-purple-color);
+  color: var(--white-color);
+  border-radius: 5px;
+  font-size: 100px;
 }

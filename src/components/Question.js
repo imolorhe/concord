@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import classNames from 'classnames';
 
 import { shuffle } from '../utils';
 import Answer from './Answer';
@@ -11,6 +12,8 @@ class Question extends Component {
         this.initialState = {
             wrongAnswerId: null,
             correctAnswerId: null,
+            hasAnswered: false,
+            isCorrectAnswer: true,
             answers: []
         };
 
@@ -29,7 +32,7 @@ class Question extends Component {
     }
 
     answerSelected(id) {
-        const { correct_answer } = this.props.data;
+        const { correct_answer, question } = this.props.data;
         const { answers } = this.state;
         const selectedAnswer = answers.filter(answer => answer.id === id)[0];
         const correctAnswer = answers.filter(answer => answer.text === correct_answer)[0];
@@ -41,10 +44,17 @@ class Question extends Component {
             });
         }
         this.setState({
-            correctAnswerId: correctAnswer.id
+            correctAnswerId: correctAnswer.id,
+            hasAnswered: true,
+            isCorrectAnswer
         });
 
-        this.props.onSelectAnswer(isCorrectAnswer, correct_answer);
+        this.props.onSelectAnswer(question, this.state.answers, isCorrectAnswer, correctAnswer.id, selectedAnswer.id);
+    }
+
+    newQuestion() {
+        this.setState(this.initialState);
+        this.props.onNewQuestion();
     }
 
     componentWillMount() {
@@ -52,7 +62,10 @@ class Question extends Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        this.setAnswersFromData(nextProps.data);
+        // Prevent shuffle when the props haven't changed. Happens when the route link is clicked
+        if (JSON.stringify(this.props.data) !== JSON.stringify(nextProps.data)) {
+            this.setAnswersFromData(nextProps.data);
+        }
     }
 
     render() {
@@ -60,6 +73,18 @@ class Question extends Component {
 
         return (
             <div className="question-wrapper">
+                <div className={classNames('question-overlay', {'show': this.state.hasAnswered})}>
+                    <div className="question-overlay-inner">
+                        {
+                            (this.state.isCorrectAnswer) ? (
+                                <div className="question-overlay-text">Correct!</div>
+                            ): (
+                                <div className="question-overlay-text">Wrong!</div>
+                            )
+                        }
+                        <button className="button" onClick={() => this.newQuestion()}>Next Question</button>
+                    </div>
+                </div>
                 <div className="question-inner-wrapper" dangerouslySetInnerHTML={{ __html: question }} />
                 <div className="question-answers-wrapper">
                     {this.state.answers.map(answer => (
