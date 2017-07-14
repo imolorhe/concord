@@ -58,7 +58,9 @@ class Question extends Component {
     }
 
     componentWillMount() {
-        this.setAnswersFromData(this.props.data);
+        if (this.props.data) {
+            this.setAnswersFromData(this.props.data);
+        }
     }
 
     componentWillReceiveProps(nextProps) {

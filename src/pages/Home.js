@@ -11,7 +11,9 @@ class Home extends Component{
 
         this.answerSelected = this.answerSelected.bind(this);
     }
-    componentDidMount() {
+
+    componentWillMount() {
+        // Previously had this in componentDidMount(), but that doesn't get called during server render
         this.props.getQuestion();
     }
 

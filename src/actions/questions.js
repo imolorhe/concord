@@ -1,5 +1,5 @@
-import axios from 'axios';
 
+export const GET_QUESTION_REQUESTED = Symbol('GET_QUESTION_REQUESTED');
 export const GET_QUESTION_SUCCESS = Symbol('GET_QUESTION_SUCCESS');
 export const IS_LOADING = Symbol('IS_LOADING');
 export const ADD_TO_SCORE_HISTORY = Symbol('ADD_TO_SCORE_HISTORY');
@@ -7,17 +7,8 @@ export const SELECT_ANSWER = Symbol('SELECT_ANSWER');
 export const SHOW_CORRECT_ANSWER = Symbol('SHOW_CORRECT_ANSWER');
 
 export function getQuestion() {
-    return (dispatch) => {
-        dispatch(isLoading(true));
-
-        axios.get('https://opentdb.com/api.php?amount=1').then(data => {
-            dispatch(isLoading(false));
-
-            console.log(data);
-            if (data && data.data) {
-                dispatch(getQuestionSuccess(data.data.results[0]));
-            }
-        });
+    return {
+        type: GET_QUESTION_REQUESTED
     };
 }
 
