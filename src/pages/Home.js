@@ -14,7 +14,9 @@ class Home extends Component{
 
     componentWillMount() {
         // Previously had this in componentDidMount(), but that doesn't get called during server render
-        this.props.getQuestion();
+        if (!Object.keys(this.props.question).length) {
+            this.props.getQuestion();
+        }
     }
 
     answerSelected(question, answers, isCorrectAnswer, correctAnswerId, selectedAnswerId) {

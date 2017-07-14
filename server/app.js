@@ -8,12 +8,17 @@ import { StaticRouter } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import { createStore, applyMiddleware } from 'redux';
 import thunk from 'redux-thunk';
+import createSagaMiddleware, { END } from 'redux-saga';
 
+import { mySaga } from '../src/sagas';
 import { questionReducer } from '../src/reducers/questions';
 import template from './template';
 import App from '../src/App';
 
-const store = createStore(questionReducer, applyMiddleware(thunk));
+// Create the saga middleware
+const sagaMiddleware = createSagaMiddleware();
+
+const store = createStore(questionReducer, applyMiddleware(thunk, sagaMiddleware));
 
 const app = express();
 
@@ -30,30 +35,44 @@ app.use(express.static(path.resolve(__dirname, '..', 'build')));
 
 app.get('*', (req, res) => {
 
+    const rootTask = sagaMiddleware.run(mySaga);
+
     const context = {};
-    console.log('SSRing..');
-    const appString = renderToString(
+    const Root = (
         <Provider store={store}>
             <StaticRouter context={context} location={req.url}>
                 <App/>
             </StaticRouter>
         </Provider>
     );
+    console.log('SSRing..');
 
-    // Get the initial state from the redux store
-    const preloadedState = store.getState();
+    // This will cause the saga tasks to trigger
+    renderToString(Root);
 
-    if (context.url) {
-        // Somewhere a `<Redirect>` was rendered
-        res.redirect(301, context.url)
-    } else {
-        // we're good, send the response
-        res.send(template({
-            body: appString,
-            title: 'XC',
-            initialState: preloadedState
-        }));
-    }
+    // Notify saga that there will be no more dispatches
+    store.dispatch(END);
+    // Listen for when the sagas have been run, then render the page
+    rootTask.done.then(() => {
+        const appString = renderToString(Root);
+
+        // Get the initial state from the redux store
+        const preloadedState = store.getState();
+
+        if (context.url) {
+            // Somewhere a `<Redirect>` was rendered
+            res.redirect(301, context.url)
+        } else {
+            // we're good, send the response
+            res.send(template({
+                body: appString,
+                title: 'Concord',
+                initialState: preloadedState
+            }));
+        }
+    }).catch(err => {
+        console.log(err);
+    });
 
 });
 
