@@ -1,15 +1,26 @@
 import React, { Component } from 'react';
+import { StyleSheet, View } from 'react-native-web';
 
 class QuestionHistoryItem extends Component {
     render() {
         const { question, answers } = this.props.item;
         return (
-            <div className="question-history-item">
-                <div dangerouslySetInnerHTML={{ __html: question }} />
-                { answers.map(answer => (<div key={answer.id} className="question-history-item-answer" dangerouslySetInnerHTML={{ __html: answer.text}}/>)) }
-            </div>
+            <View style={styles.item}>
+                <View dangerouslySetInnerHTML={{ __html: question }} />
+                { answers.map(answer => (<View key={answer.id} style={styles.itemAnswer} dangerouslySetInnerHTML={{ __html: answer.text}}/>)) }
+            </View>
         );
     }
 }
+
+const styles = StyleSheet.create({
+    item: {
+        padding: '10px'
+    },
+    itemAnswer: {
+        paddingLeft: '20px',
+        marginBottom: '5px'
+    }
+});
 
 export default QuestionHistoryItem;

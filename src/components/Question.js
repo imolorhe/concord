@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import classNames from 'classnames';
+import { StyleSheet, View, Text, Button } from 'react-native-web';
 
 import { shuffle } from '../utils';
 import Answer from './Answer';
@@ -74,21 +74,21 @@ class Question extends Component {
         const { question } = this.props.data;
 
         return (
-            <div className="question-wrapper">
-                <div className={classNames('question-overlay', {'show': this.state.hasAnswered})}>
-                    <div className="question-overlay-inner">
+            <View style={styles.wrapper}>
+                <View style={[styles.overlay, this.state.hasAnswered ? styles.showOverlay : {}]}>
+                    <View>
                         {
                             (this.state.isCorrectAnswer) ? (
-                                <div className="question-overlay-text">Correct!</div>
+                                <Text style={styles.overlayText}>Correct!</Text>
                             ): (
-                                <div className="question-overlay-text">Wrong!</div>
+                                <Text style={styles.overlayText}>Wrong!</Text>
                             )
                         }
-                        <button className="button" onClick={() => this.newQuestion()}>Next Question</button>
-                    </div>
-                </div>
-                <div className="question-inner-wrapper" dangerouslySetInnerHTML={{ __html: question }} />
-                <div className="question-answers-wrapper">
+                        <Button title='Next Question' color='#511E78' onPress={() => this.newQuestion()}>Next Question</Button>
+                    </View>
+                </View>
+                <View style={styles.innerWrapper} dangerouslySetInnerHTML={{ __html: question }} />
+                <View style={styles.answersWrapper}>
                     {this.state.answers.map(answer => (
                         <Answer
                             key={answer.id}
@@ -97,10 +97,52 @@ class Question extends Component {
                             isWrong={this.state.wrongAnswerId === answer.id}
                             onSelect={() => this.answerSelected(answer.id)} />
                     ))}
-                </div>
-            </div>
+                </View>
+            </View>
         );
     }
 }
+
+const styles = StyleSheet.create({
+    wrapper: {
+        position: 'relative',
+        flex: 1,
+        flexDirection: 'column',
+        // fontSize: '18px',
+        // textAlign: 'center'
+    },
+    innerWrapper: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        padding: '20px',
+    },
+    overlay: {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        zIndex: 1,
+        backgroundColor: 'rgba(255, 255, 255, .4)',
+        justifyContent: 'center',
+        alignItems: 'center',
+        visibility: 'hidden',
+        opacity: 0,
+    },
+    showOverlay: {
+        opacity: 1,
+        visibility: 'visible'
+    },
+    overlayText: {
+        fontSize: '36px',
+        fontWeight: 'bold',
+        textTransform: 'uppercase',
+    },
+    answersWrapper: {
+        flex: 1,
+        flexWrap: 'wrap'
+    }
+});
 
 export default Question;

@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { StyleSheet, View, Text } from 'react-native-web';
 import { connect } from 'react-redux';
 
 import QuestionHistoryItem from '../components/QuestionHistoryItem';
@@ -10,26 +11,48 @@ class ScoreBoard extends Component {
         const lossCount = history.reduce((cum, item) => !item.isCorrectAnswer ? ++cum: cum, 0);
 
         return (
-            <div className="scoreboard-wrapper">
-                <div className="scoreboard-board">
-                    <div className="scoreboard-board-item">
-                        Wins
-                        <div className="scoreboard-board-item-inner">
-                            {winCount}
-                        </div>
-                    </div>
-                    <div className="scoreboard-board-item">
-                        Losses
-                        <div className="scoreboard-board-item-inner">
-                            {lossCount}
-                        </div>
-                    </div>
-                </div>
+            <View>
+                <View style={styles.board}>
+                    <View style={styles.boardItem}>
+                        <Text>WINS</Text>
+                        <View style={styles.boardItemInner}>
+                            <Text style={styles.boardItemInnerText}>{winCount}</Text>
+                        </View>
+                    </View>
+                    <View style={styles.boardItem}>
+                        <Text>LOSSES</Text>
+                        <View style={styles.boardItemInner}>
+                            <Text style={styles.boardItemInnerText}>{lossCount}</Text>
+                        </View>
+                    </View>
+                </View>
                 { history.map(item => (<QuestionHistoryItem key={item.question.toString()} item={item}/>))}
-            </div>
+            </View>
         );
     }
 }
+
+const styles = StyleSheet.create({
+    board: {
+        flexDirection: 'row'
+    },
+    boardItem: {
+        flex: 1,
+        alignItems: 'center',
+        padding: '10px',
+    },
+    boardItemInner: {
+        flex: 1,
+        backgroundColor: '#8B2F97',
+        width: '100%',
+        borderRadius: '5px',
+    },
+    boardItemInnerText: {
+        fontSize: '100px',
+        color: '#ffffff',
+        textAlign: 'center'
+    }
+});
 
 const mapStateToProps = state => ({
     history: state.scoreHistory

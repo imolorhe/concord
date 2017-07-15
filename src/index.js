@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { AppRegistry } from 'react-native';
 import { BrowserRouter } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import { createStore, applyMiddleware } from 'redux';
@@ -33,13 +34,15 @@ const store = createStore(...createStoreArgs);
 
 sagaMiddleware.run(mySaga);
 
-ReactDOM.render(
+AppRegistry.registerComponent('App', () => () => (
     <Provider store={store}>
         <BrowserRouter>
             <App/>
         </BrowserRouter>
-    </Provider>,
-    document.getElementById('root')
-);
+    </Provider>
+));
+AppRegistry.runApplication('App', {
+    rootTag: document.getElementById('root')
+});
 
 // registerServiceWorker();
