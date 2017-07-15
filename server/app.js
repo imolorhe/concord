@@ -2,7 +2,8 @@ const path = require('path');
 import express from 'express';
 import morgan from 'morgan';
 import React from 'react';
-import { renderToString } from 'react-dom/server';
+import { renderToString, renderToStaticMarkup } from 'react-dom/server';
+import { AppRegistry } from 'react-native-web';
 
 import { StaticRouter } from 'react-router-dom';
 import { Provider } from 'react-redux';
@@ -42,6 +43,9 @@ app.get('*', (req, res) => {
     );
     console.log('SSRing..');
 
+    // Register the app
+    AppRegistry.registerComponent('App', () => () => Root);
+
     // This will cause the saga tasks to trigger
     renderToString(Root);
 
@@ -49,7 +53,10 @@ app.get('*', (req, res) => {
     store.dispatch(END);
     // Listen for when the sagas have been run, then render the page
     rootTask.done.then(() => {
-        const appString = renderToString(Root);
+        // prerender the app
+        const { element, stylesheets } = AppRegistry.getApplication('App', { });
+        const appString = renderToString(element);
+        const initialStyles = stylesheets.map((sheet) => renderToStaticMarkup(sheet)).join('\n');
 
         // Get the initial state from the redux store
         const preloadedState = store.getState();
@@ -62,7 +69,8 @@ app.get('*', (req, res) => {
             res.send(template({
                 body: appString,
                 title: 'Concord',
-                initialState: preloadedState
+                initialState: preloadedState,
+                initialStyles
             }));
         }
     }).catch(err => {
